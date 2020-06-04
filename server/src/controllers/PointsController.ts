@@ -50,17 +50,24 @@ class PointsController {
   async index(req: Request, res: Response) {
     const { city, uf, items } = req.query;
 
-    console.log(`${city}, ${uf}, ${items}`);
-
     const parsedItems = String(items)
       .split(",")
       .map((item) => Number(item.trim()));
 
     const points = await knex("points")
       .join("point_items", "points.id", "=", "point_items.point_id")
-      .whereIn("point_items.item_id", parsedItems)
-      .where("city", String(city))
-      .where("uf", String(uf))
+      .where(function () {
+        this.where(city === undefined).orWhere("city", String(city));
+      })
+      .where(function () {
+        this.where(uf === undefined).orWhere("uf", String(uf));
+      })
+      .where(function () {
+        this.where(items === undefined).orWhereIn(
+          "point_items.item_id",
+          parsedItems
+        );
+      })
       .distinct()
       .select("points.*");
 
