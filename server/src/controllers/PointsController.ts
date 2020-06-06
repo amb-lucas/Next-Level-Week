@@ -102,8 +102,6 @@ class PointsController {
       .where("point_items.point_id", "=", id)
       .select("items.title");
 
-    console.log(items);
-
     return res.json({ ...serializedPoint, items });
   }
 }
