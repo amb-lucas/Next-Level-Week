@@ -1,6 +1,8 @@
-import { Request, Response } from "express";
+import { Request, Response, request } from "express";
 
 import knex from "../database/connection";
+
+const IP = "192.168.1.67";
 
 class PointsController {
   async create(req: Request, res: Response) {
@@ -18,8 +20,7 @@ class PointsController {
     const trx = await knex.transaction();
 
     const point = {
-      image:
-        "https://lh3.googleusercontent.com/proxy/Rwv--kWP9aVVp0Mni_0Q4ryWIVWXiGYNDqoyCZwcaPQIqL_7UJVnuVahJFoEDVy7TBFD4OyozbSTpESNUhx1Z0iT0IdRiMJROmWLVXU9VK96sfqeHVJtinwYEO-qFCDQiIvqLZ-MrvxXn5WRquLm",
+      image: req.file.filename,
       name,
       email,
       whatsapp,
@@ -33,12 +34,15 @@ class PointsController {
 
     const point_id = insertedIds[0];
 
-    const pointItems = items.map((item_id: Number) => {
-      return {
-        item_id,
-        point_id,
-      };
-    });
+    const pointItems = items
+      .split(",")
+      .map((item: string) => Number(item.trim()))
+      .map((item_id: Number) => {
+        return {
+          item_id,
+          point_id,
+        };
+      });
 
     await trx("point_items").insert(pointItems);
 
@@ -71,7 +75,12 @@ class PointsController {
       .distinct()
       .select("points.*");
 
-    return res.json(points);
+    const serializedPoints = points.map((point) => ({
+      ...point,
+      image: `http://${IP}:3333/uploads/points/${point.image}`,
+    }));
+
+    return res.json(serializedPoints);
   }
 
   async show(req: Request, res: Response) {
@@ -83,12 +92,19 @@ class PointsController {
       return res.status(400).json({ error: "Point not found" });
     }
 
+    const serializedPoint = {
+      ...point,
+      image: `http://${IP}:3333/uploads/points/${point.image}`,
+    };
+
     const items = await knex("items")
       .join("point_items", "items.id", "=", "point_items.item_id")
-      .where("point_items.id", "=", id)
+      .where("point_items.point_id", "=", id)
       .select("items.title");
 
-    return res.json({ ...point, items });
+    console.log(items);
+
+    return res.json({ ...serializedPoint, items });
   }
 }
 
