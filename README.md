@@ -20,9 +20,9 @@ It has 2 pages:
 
 - [Landing Page](https://github.com/amb-lucas/Next-Level-Week/blob/master/screenshots/web/home.png?raw=true)
 
-- [Establishment Sign Up (Empty)](https://github.com/amb-lucas/Next-Level-Week/blob/master/screenshots/web/form-vazio.png?raw=true)
+- [Establishment Sign Up](https://github.com/amb-lucas/Next-Level-Week/blob/master/screenshots/web/form-vazio.png?raw=true)
 
-- [Establishment Sign Up (Complete)](https://raw.githubusercontent.com/amb-lucas/OmniStack-11/master/screenshots/front-end/profileFilled.png)
+- [Establishment Sign Up - Filled](https://github.com/amb-lucas/Next-Level-Week/blob/master/screenshots/web/form-preenchido.png?raw=true)
 
 It was developed using ReactJS and it communicates with the back-end with Axios.
 
